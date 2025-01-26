@@ -114,47 +114,7 @@
                 </label>
             </div>
 
-            <div class="file">
-                <div class="file-title">Chess Type Beat</div>
-                <audio controls>
-                    <source src="./files/Chess Type Beat.m4a" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <a href="files/file1.m4a" download>Download</a>
-            </div>
-            <div class="file">
-                <div class="file-title">Скрябин - Прогноз Погоди</div>
-                <audio controls>
-                    <source src="./files/Скрябин - Прогноз Погоди.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <a href="files/file2.m4a" download>Download</a>
-            </div>
-            <div class="file">
-                <div class="file-title">Скрябін - Люди Як Кораблі</div>
-                <audio controls>
-                    <source src="./files/Скрябін - Люди Як Кораблі.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <a href="files/file2.m4a" download>Download</a>
-            </div>
-            <div class="file">
-                <div class="file-title">Скрябін - Старі Фотографії</div>
-                <audio controls>
-                    <source src="./files/Скрябін - Старі Фотографії.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <a href="files/file2.m4a" download>Download</a>
-            </div>
-            <div class="file">
-                <div class="file-title">Скрябін - Шмата</div>
-                <audio controls>
-                    <source src="./files/Скрябін - Шмата.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <a href="files/file2.m4a" download>Download</a>
-            </div>
-            <!-- Add more files as needed -->
+            <div id="file-list"></div>
         </div>
     </div>
 
@@ -163,9 +123,47 @@
         const loginSection = document.getElementById('login-section');
         const mediaSection = document.getElementById('media-section');
         const filters = document.getElementById('filters');
-        let autoQueue = true;
-        let reverseOrder = false;
-        let stopAtEnd = false;
+        const fileList = document.getElementById('file-list');
+
+        // Список пісень
+        const songs = [
+            "Chess Type Beat.m4a",
+            "Скрябин - Прогноз Погоди.mp3",
+            "Скрябін - Люди Як Кораблі.mp3",
+            "Скрябін - Старі Фотографії.mp3",
+            "Скрябін - Шмата.mp3"
+        ];
+
+        // Функція для створення HTML для пісень
+        function createSongElements() {
+            songs.forEach(song => {
+                const songDiv = document.createElement('div');
+                songDiv.className = 'file';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'file-title';
+                titleDiv.textContent = song.split('.').slice(0, -1).join('.'); // Витягуємо назву пісні без розширення
+
+                const audio = document.createElement('audio');
+                audio.controls = true;
+
+                const source = document.createElement('source');
+                source.src = `./files/${song}`;
+                source.type = 'audio/mpeg';
+
+                audio.appendChild(source);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = `./files/${song}`;
+                downloadLink.download = song;
+                downloadLink.textContent = "Download";
+
+                songDiv.appendChild(titleDiv);
+                songDiv.appendChild(audio);
+                songDiv.appendChild(downloadLink);
+                fileList.appendChild(songDiv);
+            });
+        }
 
         function checkPassword() {
             const inputPassword = document.getElementById('password').value;
@@ -174,6 +172,7 @@
                 loginSection.classList.add('hidden');
                 mediaSection.classList.remove('hidden');
                 filters.classList.remove('hidden');
+                createSongElements(); // Створюємо елементи пісень
             } else {
                 alert('Incorrect password. Please try again.');
             }
