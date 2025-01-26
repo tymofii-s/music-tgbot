@@ -28,6 +28,10 @@
                 <label id="stopAtEndContainer">
                     <input type="checkbox" id="stopAtEnd" onclick="toggleStopAtEnd()"> Stop at End
                 </label>
+                <label>
+                    <input type="checkbox" id="repeatSong" />
+                    Повторювати пісню
+                </label>
             </div>
 
             <button onclick="loadAnotherPlaylist()">Інший плейлист</button>
@@ -42,6 +46,11 @@
             </audio>
             <button id="prev-button">❮</button>
             <button id="next-button">❯</button>
+        </div>
+
+        <div class="footer">
+            <p>gap start</p>
+            <p>gap end</p>
         </div>
     </div>
 
