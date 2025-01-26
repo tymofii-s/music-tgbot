@@ -86,6 +86,29 @@
                 padding: 10px;
             }
         }
+
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Щоб плеєр був поверх інших елементів */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .audio-player button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +139,15 @@
 
             <div id="file-list"></div>
         </div>
+
+        <div id="audio-player" class="audio-player hidden">
+            <button id="prev-button" style="color: black;">❮</button>
+            <audio id="player" controls>
+                <source id="audio-source" src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <button id="next-button" style="color: black;">❯</button>
+        </div>
     </div>
 
     <script>
@@ -124,9 +156,11 @@
         const mediaSection = document.getElementById('media-section');
         const filters = document.getElementById('filters');
         const fileList = document.getElementById('file-list');
+        const audioPlayer = document.getElementById('audio-player');
+        const player = document.getElementById('player');
+        const audioSource = document.getElementById('audio-source');
 
-        // Список пісень
-        const songs = [
+        let songs = [
             "Chess Type Beat.m4a",
             "Скрябин - Прогноз Погоди.mp3",
             "Скрябін - Люди Як Кораблі.mp3",
@@ -134,35 +168,54 @@
             "Скрябін - Шмата.mp3"
         ];
 
-        // Функція для створення HTML для пісень
+        let currentIndex = 0;
+        let autoQueue = true;
+        let reverseOrder = false;
+        let stopAtEnd = false;
+
         function createSongElements() {
-            songs.forEach(song => {
+            songs.forEach((song, index) => {
                 const songDiv = document.createElement('div');
                 songDiv.className = 'file';
 
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'file-title';
-                titleDiv.textContent = song.split('.').slice(0, -1).join('.'); // Витягуємо назву пісні без розширення
+                titleDiv.textContent = song.split('.').slice(0, -1).join('.');
 
-                const audio = document.createElement('audio');
-                audio.controls = true;
-
-                const source = document.createElement('source');
-                source.src = `./files/${song}`;
-                source.type = 'audio/mpeg';
-
-                audio.appendChild(source);
-
-                const downloadLink = document.createElement('a');
-                downloadLink.href = `./files/${song}`;
-                downloadLink.download = song;
-                downloadLink.textContent = "Download";
+                const playButton = document.createElement('button');
+                playButton.textContent = 'Play';
+                playButton.onclick = () => playSong(index); // Відтворюємо пісню при натисканні
 
                 songDiv.appendChild(titleDiv);
-                songDiv.appendChild(audio);
-                songDiv.appendChild(downloadLink);
+                songDiv.appendChild(playButton);
                 fileList.appendChild(songDiv);
             });
+        }
+
+        function playSong(index) {
+            currentIndex = index;
+            audioSource.src = `./files/${songs[currentIndex]}`;
+            player.load();
+            player.play();
+            audioPlayer.classList.remove('hidden'); // Показуємо плеєр
+        }
+
+        function playNext() {
+            if (reverseOrder) {
+                currentIndex--;
+            } else {
+                currentIndex++;
+            }
+
+            if (stopAtEnd) {
+                if (currentIndex < 0 || currentIndex >= songs.length) {
+                    return; // Не переходити за межі
+                }
+            } else {
+                currentIndex = (currentIndex + songs.length) % songs.length; // Циклічний перехід
+            }
+
+            playSong(currentIndex);
         }
 
         function checkPassword() {
@@ -178,21 +231,23 @@
             }
         }
 
-        function toggleFilters() {
-            filters.classList.toggle('hidden');
-        }
+        // Додаємо обробники подій для кнопок навігації
+        document.getElementById('next-button').onclick = playNext;
+        document.getElementById('prev-button').onclick = () => {
+            currentIndex = reverseOrder ? currentIndex + 1 : currentIndex - 1;
+            if (currentIndex < 0) currentIndex = songs.length - 1;
+            if (currentIndex >= songs.length) currentIndex = 0;
+            playSong(currentIndex);
+        };
 
+        // Додаємо обробник події для закінчення пісні
+        player.onended = () => {
+            if (autoQueue) playNext();
+        };
+
+        // Функції для фільтрів
         function toggleAutoQueue() {
             autoQueue = document.getElementById('autoQueue').checked;
-            document.getElementById('reverseOrderContainer').style.display = autoQueue ? 'block' : 'none';
-            document.getElementById('stopAtEndContainer').style.display = autoQueue ? 'block' : 'none';
-
-            if (!autoQueue) {
-                reverseOrder = false;
-                stopAtEnd = false;
-                document.getElementById('reverseOrder').checked = false;
-                document.getElementById('stopAtEnd').checked = false;
-            }
         }
 
         function toggleReverseOrder() {
@@ -202,37 +257,6 @@
         function toggleStopAtEnd() {
             stopAtEnd = document.getElementById('stopAtEnd').checked;
         }
-
-        // Add logic for media playback based on selected filters
-        const audioElements = Array.from(document.querySelectorAll('audio'));
-        let currentIndex = 0;
-
-        function playNext() {
-            currentIndex += reverseOrder ? -1 : 1;
-
-            if (stopAtEnd) {
-                if ((reverseOrder && currentIndex < 0) || (!reverseOrder && currentIndex >= audioElements.length)) {
-                    return;
-                }
-            } else {
-                currentIndex = (currentIndex + audioElements.length) % audioElements.length;
-            }
-
-            audioElements.forEach((audio, index) => {
-                if (index === currentIndex) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                    audio.currentTime = 0;
-                }
-            });
-        }
-
-        audioElements.forEach((audio, index) => {
-            audio.onended = () => {
-                if (autoQueue) playNext();
-            };
-        });
     </script>
 </body>
 </html>
