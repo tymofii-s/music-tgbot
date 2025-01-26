@@ -85,6 +85,10 @@
                 margin: 20px auto;
                 padding: 10px;
             }
+
+            .audio-player button {
+                margin: 0 70px;
+            }
         }
 
         .audio-player {
@@ -98,17 +102,13 @@
             z-index: 1000; /* Щоб плеєр був поверх інших елементів */
         }
 
-        .hidden {
-            display: none;
-        }
-
         .audio-player button {
             color: black;
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
-            margin: 0 70px;
+            margin: 0 50px;
         }
     </style>
 </head>
@@ -152,7 +152,6 @@
     </div>
 
     <script>
-        const correctPassword = "1234"; // Replace with your password
         const loginSection = document.getElementById('login-section');
         const mediaSection = document.getElementById('media-section');
         const filters = document.getElementById('filters');
@@ -161,20 +160,26 @@
         const player = document.getElementById('player');
         const audioSource = document.getElementById('audio-source');
 
-        let songs = [
-            "Chess Type Beat.m4a",
-            "Скрябин - Прогноз Погоди.mp3",
-            "Скрябін - Люди Як Кораблі.mp3",
-            "Скрябін - Старі Фотографії.mp3",
-            "Скрябін - Шмата.mp3"
-        ];
+        const playlists = {
+            "lts123": [
+                "Chess Type Beat.m4a",
+                "What About Me.m4a"
+            ],
+            "l1234": [
+                "Dandadan.m4a",
+                "Шмата.mp3"
+            ],
+            // Додайте інші паролі та плейлисти за потреби
+        };
 
         let currentIndex = 0;
         let autoQueue = true;
         let reverseOrder = false;
         let stopAtEnd = false;
+        let songs = []; // Масив для пісень
 
         function createSongElements() {
+            fileList.innerHTML = ''; // Очищуємо список пісень перед додаванням нових
             songs.forEach((song, index) => {
                 const songDiv = document.createElement('div');
                 songDiv.className = 'file';
@@ -195,7 +200,7 @@
 
         function playSong(index) {
             currentIndex = index;
-            audioSource.src = `./files/${songs[currentIndex]}`;
+            audioSource.src = `./files/${document.getElementById('password').value}/${songs[currentIndex]}`; // Формуємо шлях до файлу
             player.load();
             player.play();
             audioPlayer.classList.remove('hidden'); // Показуємо плеєр
@@ -222,13 +227,14 @@
         function checkPassword() {
             const inputPassword = document.getElementById('password').value;
 
-            if (inputPassword === correctPassword) {
+            if (playlists[inputPassword]) {
                 loginSection.classList.add('hidden');
                 mediaSection.classList.remove('hidden');
                 filters.classList.remove('hidden');
+                songs = playlists[inputPassword]; // Оновлюємо масив пісень
                 createSongElements(); // Створюємо елементи пісень
             } else {
-                alert('Incorrect password. Please try again.');
+                alert('Неправильний пароль. Спробуйте ще раз.');
             }
         }
 
