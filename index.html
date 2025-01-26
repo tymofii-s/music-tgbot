@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Media Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .file {
+            background: linear-gradient(to right, #ff7f50, #ff4500);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .file-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .filters {
+            margin-top: 20px;
+            background: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .filters h3 {
+            margin: 0 0 10px 0;
+        }
+        .filters label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .filter-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .filter-toggle:hover {
+            background: #0056b3;
+        }
+        audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 90%;
+                margin: 20px auto;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="filter-toggle" onclick="toggleFilters()">Filters</button>
+
+    <div class="container">
+        <h1>Welcome to My Media Player</h1>
+        <div id="login-section">
+            <p>Please enter the password to access the files:</p>
+            <input type="password" id="password" placeholder="Enter password">
+            <button onclick="checkPassword()">Submit</button>
+        </div>
+
+        <div id="media-section" class="hidden">
+            <h2>Your Files</h2>
+            <div class="filters hidden" id="filters">
+                <h3>Filters</h3>
+                <label>
+                    <input type="checkbox" id="autoQueue" checked onclick="toggleAutoQueue()"> Automatic Queue
+                </label>
+                <label id="reverseOrderContainer">
+                    <input type="checkbox" id="reverseOrder" onclick="toggleReverseOrder()"> Reverse Order
+                </label>
+                <label id="stopAtEndContainer">
+                    <input type="checkbox" id="stopAtEnd" onclick="toggleStopAtEnd()"> Stop at End
+                </label>
+            </div>
+
+            <div class="file">
+                <div class="file-title">Chess Type Beat</div>
+                <audio controls>
+                    <source src="./files/Chess Type Beat.m4a" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="files/file1.m4a" download>Download</a>
+            </div>
+            <div class="file">
+                <div class="file-title">Скрябин - Прогноз Погоди</div>
+                <audio controls>
+                    <source src="./files/Скрябин - Прогноз Погоди.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="files/file2.m4a" download>Download</a>
+            </div>
+            <div class="file">
+                <div class="file-title">Скрябін - Люди Як Кораблі</div>
+                <audio controls>
+                    <source src="./files/Скрябін - Люди Як Кораблі.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="files/file2.m4a" download>Download</a>
+            </div>
+            <div class="file">
+                <div class="file-title">Скрябін - Старі Фотографії</div>
+                <audio controls>
+                    <source src="./files/Скрябін - Старі Фотографії.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="files/file2.m4a" download>Download</a>
+            </div>
+            <div class="file">
+                <div class="file-title">Скрябін - Шмата</div>
+                <audio controls>
+                    <source src="./files/Скрябін - Шмата.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <a href="files/file2.m4a" download>Download</a>
+            </div>
+            <!-- Add more files as needed -->
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "1234"; // Replace with your password
+        const loginSection = document.getElementById('login-section');
+        const mediaSection = document.getElementById('media-section');
+        const filters = document.getElementById('filters');
+        let autoQueue = true;
+        let reverseOrder = false;
+        let stopAtEnd = false;
+
+        function checkPassword() {
+            const inputPassword = document.getElementById('password').value;
+
+            if (inputPassword === correctPassword) {
+                loginSection.classList.add('hidden');
+                mediaSection.classList.remove('hidden');
+                filters.classList.remove('hidden');
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        }
+
+        function toggleFilters() {
+            filters.classList.toggle('hidden');
+        }
+
+        function toggleAutoQueue() {
+            autoQueue = document.getElementById('autoQueue').checked;
+            document.getElementById('reverseOrderContainer').style.display = autoQueue ? 'block' : 'none';
+            document.getElementById('stopAtEndContainer').style.display = autoQueue ? 'block' : 'none';
+
+            if (!autoQueue) {
+                reverseOrder = false;
+                stopAtEnd = false;
+                document.getElementById('reverseOrder').checked = false;
+                document.getElementById('stopAtEnd').checked = false;
+            }
+        }
+
+        function toggleReverseOrder() {
+            reverseOrder = document.getElementById('reverseOrder').checked;
+        }
+
+        function toggleStopAtEnd() {
+            stopAtEnd = document.getElementById('stopAtEnd').checked;
+        }
+
+        // Add logic for media playback based on selected filters
+        const audioElements = Array.from(document.querySelectorAll('audio'));
+        let currentIndex = 0;
+
+        function playNext() {
+            currentIndex += reverseOrder ? -1 : 1;
+
+            if (stopAtEnd) {
+                if ((reverseOrder && currentIndex < 0) || (!reverseOrder && currentIndex >= audioElements.length)) {
+                    return;
+                }
+            } else {
+                currentIndex = (currentIndex + audioElements.length) % audioElements.length;
+            }
+
+            audioElements.forEach((audio, index) => {
+                if (index === currentIndex) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+        }
+
+        audioElements.forEach((audio, index) => {
+            audio.onended = () => {
+                if (autoQueue) playNext();
+            };
+        });
+    </script>
+</body>
+</html>
