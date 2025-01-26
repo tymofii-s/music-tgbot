@@ -1,0 +1,11 @@
+@media screen and (max-width: 768px) {
+    .container {
+        width: 90%;
+        margin: 20px auto;
+        padding: 10px;
+    }
+
+    .audio-player button {
+        margin: 0 70px;
+    }
+}

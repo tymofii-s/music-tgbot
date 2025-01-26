@@ -1,0 +1,13 @@
+.file {
+    background: linear-gradient(to right, #ff7f50, #ff4500);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+}
+.file-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
